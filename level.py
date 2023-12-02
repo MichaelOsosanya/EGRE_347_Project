@@ -10,6 +10,7 @@ class Level:
         self.display_surface = surface
         self.setup_level(level_data)
         self.world_shift = 0 #camera starting point
+        self.projectiles = pygame.sprite.Group()  #adding this made it possible for the level to actually render the object on the screen. i tried doing this in the main but i found it easier to have the level design render this
 
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
@@ -77,3 +78,13 @@ class Level:
         self.horizontal_movement_collision()
         self.vertical_movement_collision()
         self.player.draw(self.display_surface)
+
+        for projectile in self.player.sprite.projectiles:   #if the projecile is made its gets added to the group created above here 
+            self.projectiles.add(projectile)
+
+
+        self.projectiles.update()  #updates the projecciles position and speed
+        self.projectiles.draw(self.display_surface)  #is whats actually rendering the object 
+
+
+        pygame.display.flip()
