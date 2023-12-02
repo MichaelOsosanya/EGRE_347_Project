@@ -14,4 +14,4 @@ CHANGES AS OF 11.27.23
 - added ability to go up and down using the up and down arrow keys.
 
 NEEDS
--projectiles
+- projectiles
