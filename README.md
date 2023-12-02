@@ -13,7 +13,7 @@ CHANGES AS OF 11.27.23
 - added ability to go up and down using the up and down arrow keys.
 
 NEEDS
--projectiles
+- projectiles
 _______________________________________________________________________________
 CHANGES AS OF 12.2.23
 - added projectile class using an orb.png
@@ -22,4 +22,4 @@ CHANGES AS OF 12.2.23
 - changed level so that it can render the projectile
 
 NEEDS
--collission for projectiles
+- collission for projectiles
