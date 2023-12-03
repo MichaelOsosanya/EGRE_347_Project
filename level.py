@@ -67,6 +67,14 @@ class Level:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
 
+    def projectile_tile_collide(self):    #adding method for detectile collision for projectiles with tiles
+        for projectile in self.projectiles.sprites():
+            projectile.rect.x += projectile.speed * projectile.direction
+
+            for tile in self.tiles.sprites():
+                if projectile.rect.colliderect(tile.rect):
+                    projectile.kill()     #using kill method to remove projectile
+
     def run(self):
         #level tiles
         self.tiles.update(self.world_shift) #moves camera
@@ -86,5 +94,6 @@ class Level:
         self.projectiles.update()  #updates the projecciles position and speed
         self.projectiles.draw(self.display_surface)  #is whats actually rendering the object 
 
+        self.projectile_tile_collide()   #calling the method to ensure the projectile removes itself
 
         pygame.display.flip()
