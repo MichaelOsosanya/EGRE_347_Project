@@ -23,3 +23,13 @@ CHANGES AS OF 12.2.23
 
 NEEDS
 - collission for projectiles
+
+_______________________________________________________________________________
+CHANGES AS OF 12.3.23
+I believe the only file i changed was the level but if it does not work let me know and I'll upload every file
+- added a method in level to check for collision with tiles and projectiles
+- called method
+
+NEEDS
+- testing
+
