@@ -1,25 +1,11 @@
-import pygame 
-from tile1 import AnimatedTile
-from random import randint
+import pygame
+from tiles import StaticTile
 
-class Enemy(AnimatedTile):
+class Enemy(StaticTile):
     def __init__(self,size,x,y):
-        super().__init__(size,x,y, '../graphics/enemy/run')
-        self.rect.y += size - self.image.get_size()[1]
-        self.speed = randint(3,5)
-
-    def move(self):
-        self.rect.x += self.speed
-
-    def reverse_image(self):
-        if self.speed > 0:
-            self.image = pygame.transform.flip(self.image, True, False)
-
-    def reverse(self):
-        self.speed *= -1
+        super().__init__(size,x,y, pygame.image.load('../graphics/enemies/red_monster_single.png').convert_alpha())
+    
 
     def update(self,shift):
         self.rect.x += shift
-        self.animate()
-        self.move()
-        self.reverse_image()
+
