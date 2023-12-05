@@ -18,6 +18,7 @@ class Player(pygame.sprite.Sprite):
 
     def get_input(self):
         keys = pygame.key.get_pressed()
+        
 
         if keys[pygame.K_RIGHT]:
             self.direction.x = 1
@@ -25,6 +26,11 @@ class Player(pygame.sprite.Sprite):
             self.direction.x = -1
         else:
             self.direction.x = 0
+
+        if keys[pygame.K_SPACE] and keys[pygame.K_RIGHT]:
+            self.shoot_projectile()   #changed from jump
+        elif keys[pygame.K_SPACE] and keys[pygame.K_LEFT]:
+            self.shoot_projectile()   #changed from jump
 
         if keys[pygame.K_UP]:
             self.direction.y = -8
@@ -41,6 +47,12 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.direction.y
 
 
+    def shoot_projectile(self): #method for the shoot projectile
+        projectile = Projectile(self.rect.x, self.rect.y, self.direction.x) #makes projectile object from the position of the player. 
+        self.projectiles.add(projectile)    #adds that projectile to a group
+
     def update(self):
         self.get_input()
+
+
 
