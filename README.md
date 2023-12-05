@@ -14,22 +14,4 @@ CHANGES AS OF 11.27.23
 
 NEEDS
 - projectiles
-_______________________________________________________________________________
-CHANGES AS OF 12.2.23
-- added projectile class using an orb.png
-- changed space to shoot projectile
-- added a method to shoot projectile
-- changed level so that it can render the projectile
-
-NEEDS
-- collission for projectiles
-
-_______________________________________________________________________________
-CHANGES AS OF 12.3.23
-I believe the only file i changed was the level but if it does not work let me know and I'll upload every file
-- added a method in level to check for collision with tiles and projectiles
-- called method
-
-NEEDS
-- testing
 
