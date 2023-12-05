@@ -35,7 +35,7 @@ class Level:
         if player_x < screen_width / 4 and direction_x < 0:
             self.world_shift = 8
             player.speed = 0
-        elif player_x > (screen_width - screen_width / 4) and direction_x > 0:
+        elif player_x > (screen_width - screen_width / 2) and direction_x > 0:    #changed divisor by 2 so that he would stay in the first quarter of the screen
             self.world_shift = -8
             player.speed = 0
         else:

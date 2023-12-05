@@ -1,5 +1,5 @@
 import pygame
-from support import import_folder
+from projectile import Projectile
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos):
@@ -11,16 +11,11 @@ class Player(pygame.sprite.Sprite):
         #player movement
         self.direction = pygame.math.Vector2(0,0)
         self.speed = 8
-        self.gravity = .8
+        self.gravity = 0    #changed to 0 so it could "float"
         self.jump_speed = -16
 
-    def import_character_assets(self):
-        character_path = '../graphics/chracter/'
-        self.animations = {'idle':[], 'run':[], 'jump':[], 'fall':[]}
+        self.projectiles = pygame.sprite.Group()  # creating an object of the sprite group for the projectile
 
-        for animation in self.animations.keys():
-            full_path = character_path + animation
-            self.animations[animation] = import_folder(full_path)
     def get_input(self):
         keys = pygame.key.get_pressed()
 
@@ -31,16 +26,21 @@ class Player(pygame.sprite.Sprite):
         else:
             self.direction.x = 0
 
-        if keys[pygame.K_SPACE]:
-            self.jump()
+        if keys[pygame.K_UP]:
+            self.direction.y = -8
+        elif keys[pygame.K_DOWN]:
+            self.direction.y = 8    #so its moving rather slowly going up and down so i changed this mnumber but i think we should try not having gravity for the main player
+        else: 
+            self.direction.y = 0
+
+            
 
 
     def apply_gravity(self):
         self.direction.y += self.gravity
         self.rect.y += self.direction.y
 
-    def jump(self):
-        self.direction.y = self.jump_speed
 
     def update(self):
         self.get_input()
+
