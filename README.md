@@ -34,6 +34,10 @@ I believe the only file i changed was the level but if it does not work let me k
 
 NEEDS
 - testing
-
-=======
->>>>>>> main
+_______________________________________________________________________________
+CHANGES AS OF 12.5.23
+- changed so projectiles only shoot one at a time using a shooting flag
+- added enemy projectiles
+- added enemy projectile collisions with player adds to collission count
+- added player projectile collision kills enemy
+- added a print statement for collision to be used for event handler
