@@ -1,12 +1,16 @@
 import pygame
+from support import import_folder
 from projectile import Projectile
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos):
+    def __init__(self, pos, surface):
         super().__init__()
-        self.image = pygame.Surface((32,64))
-        self.image.fill('red')
+        self.import_character_assets()
+        self.frame_index = 0
+        self.animation_speed = 0.15
+        self.image = self.idle[self.frame_index]
         self.rect = self.image.get_rect(topleft = pos)
+        self.shooting_flag = False
         
         #player movement
         self.direction = pygame.math.Vector2(0,0)
@@ -14,10 +18,34 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0    #changed to 0 so it could "float"
         self.jump_speed = -16
 
+        #player status
+        self.facing_right = True
+
+
         self.projectiles = pygame.sprite.Group()  # creating an object of the sprite group for the projectile
 
+
+    def import_character_assets(self):
+        character_path = '../graphics/player/robot'
+
+        self.idle = import_folder(character_path)
+
+    def animate(self):
+        animation = self.idle
+
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(animation):
+            self.frame_index = 0
+
+        image = animation[int(self.frame_index)]
+        if self.facing_right:
+            self.image = image
+        else:
+            flipped_image = pygame.transform.flip(image,True,False)
+            self.image = flipped_image
+
     def get_input(self):
-        keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()   #returns bool
         
 
         if keys[pygame.K_RIGHT]:
@@ -25,12 +53,23 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_LEFT]:
             self.direction.x = -1
         else:
-            self.direction.x = 0
-
+            self.direction.x = 0   
+        """
         if keys[pygame.K_SPACE] and keys[pygame.K_RIGHT]:
             self.shoot_projectile()   #changed from jump
         elif keys[pygame.K_SPACE] and keys[pygame.K_LEFT]:
             self.shoot_projectile()   #changed from jump
+        """
+        if keys[pygame.K_SPACE]:# and keys[pygame.K_RIGHT]:
+            self.shooting_flag = True
+        if keys[pygame.K_SPACE]:# and keys[pygame.K_LEFT]:
+            self.shooting_flag = True
+        if keys[pygame.K_SPACE]  == False and self.shooting_flag == True and keys[pygame.K_RIGHT]: #and self.shooting_flag == True :
+            self.shoot_projectile()   #changed from jump
+            self.shooting_flag = False
+        if keys[pygame.K_SPACE] == False and self.shooting_flag == True and keys[pygame.K_LEFT]:# and self.shooting_flag == True:
+            self.shoot_projectile()   #changed from jump
+            self.shooting_flag = False
 
         if keys[pygame.K_UP]:
             self.direction.y = -8
