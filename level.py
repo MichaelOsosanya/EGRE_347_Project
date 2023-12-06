@@ -1,32 +1,63 @@
 import pygame
-from tiles import Tile
+from tiles import StaticTile, Tile
+from support import import_csv_layout, import_cut_graphics
 from settings import tile_size, screen_width
 from player import Player
+from enemy import Enemy
 
 class Level:
     def __init__(self, level_data, surface): 
 
         #level setup
-        self.display_surface = surface
-        self.setup_level(level_data)
         self.world_shift = 0 #camera starting point
         self.projectiles = pygame.sprite.Group()  #adding this made it possible for the level to actually render the object on the screen. i tried doing this in the main but i found it easier to have the level design render this
+        self.display_surface = surface
 
-    def setup_level(self, layout):
-        self.tiles = pygame.sprite.Group()
+        #player
+        player_layout = import_csv_layout(level_data['player'])
         self.player = pygame.sprite.GroupSingle()
+        self.player_setup(player_layout)
+
+        #terrain
+        terrain_layout = import_csv_layout(level_data['terrain'])
+        self.terrain_sprites = self.create_tile_group(terrain_layout, 'terrain')
+
+        #enemy
+        enemy_layout = import_csv_layout(level_data['enemies'])
+        self.enemy_sprites = self.create_tile_group(enemy_layout, 'enemies') 
+        self.collision_count = 0
+        #need to instantiate projectile
+
+
+    def create_tile_group(self, layout, type):
+        sprite_group = pygame.sprite.Group()
 
         for row_index, row in enumerate(layout):
-            for col_index, cell in enumerate(row):
-                x = col_index * tile_size
-                y = row_index * tile_size
+            for col_index, val in enumerate(row):
+                if val != '-1':
+                    x = col_index * tile_size
+                    y = row_index * tile_size
 
-                if cell == 'X':
-                    tile = Tile((x,y),tile_size)
-                    self.tiles.add(tile)
-                if cell == 'P':
-                    player_sprite = Player((x,y)) 
-                    self.player.add(player_sprite)
+                    if type == 'terrain':
+                        terrain_tile_list = import_cut_graphics('../graphics/terrain_tiles2.png')
+                        tile_surface = terrain_tile_list[int(val)]
+                        sprite = StaticTile(tile_size,x,y,tile_surface)
+
+                    if type == 'enemies':
+                        sprite = Enemy(tile_size,x,y)
+
+                    sprite_group.add(sprite)
+
+        return sprite_group
+
+    def player_setup(self, layout):
+        for row_index, row in enumerate(layout):
+            for col_index, val in enumerate(row):
+                    x = col_index * tile_size
+                    y = row_index * tile_size
+                    if val == '5':
+                        sprite = Player((x,y), self.display_surface)
+                        self.player.add(sprite)
 
     def scroll_x(self):
         player = self.player.sprite
@@ -46,8 +77,9 @@ class Level:
     def horizontal_movement_collision(self):
         player = self.player.sprite
         player.rect.x += player.direction.x * player.speed
-
-        for sprite in self.tiles.sprites():
+        collidable_sprites =  self.terrain_sprites.sprites()
+        
+        for sprite in collidable_sprites:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0:
                     player.rect.left = sprite.rect.right
@@ -57,8 +89,9 @@ class Level:
     def vertical_movement_collision(self):
         player = self.player.sprite
         player.apply_gravity()
-
-        for sprite in self.tiles.sprites():
+        collidable_sprites =  self.terrain_sprites.sprites()
+        
+        for sprite in collidable_sprites:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
@@ -70,28 +103,65 @@ class Level:
     def projectile_tile_collide(self):    #adding method for detectile collision for projectiles with tiles
         for projectile in self.projectiles.sprites():
             projectile.rect.x += projectile.speed * projectile.direction
-
-            for tile in self.tiles.sprites():
-                if projectile.rect.colliderect(tile.rect):
+            collidable_sprites =  self.terrain_sprites.sprites()
+        
+            for sprite in collidable_sprites:
+                if projectile.rect.colliderect(sprite.rect):
                     projectile.kill()     #using kill method to remove projectile
 
+    def enemy_shoots_player(self):
+        for projectile in self.enemy_sprites.sprites():
+            projectile_collisions = pygame.sprite.spritecollide(self.player.sprite, projectile.projectiles, True)
+            if projectile_collisions:
+                self.collision_count += 1
+                print(f"Player Collision Count: {self.collision_count}")
+
+    def player_shoots_enemy(self):
+        for enemy in self.enemy_sprites.sprites():
+            enemy_collisions = pygame.sprite.spritecollide(enemy, self.player.sprite.projectiles, True)
+            if enemy_collisions:
+                enemy.kill()
+
+    #def player_shoots_enemy(self):
+
+                
     def run(self):
-        #level tiles
-        self.tiles.update(self.world_shift) #moves camera
-        self.tiles.draw(self.display_surface)
-        self.scroll_x()
+        #terrain
+        current_time = pygame.time.get_ticks()  #added a tick timer
+
+        self.terrain_sprites.draw(self.display_surface)
+        self.terrain_sprites.update(self.world_shift)
+
+        #enemy
+        self.enemy_sprites.draw(self.display_surface)
+        self.enemy_sprites.update(self.world_shift)
 
         #player
         self.player.update()
         self.horizontal_movement_collision()
         self.vertical_movement_collision()
+        self.scroll_x()
         self.player.draw(self.display_surface)
 
         for projectile in self.player.sprite.projectiles:   #if the projecile is made its gets added to the group created above here 
             self.projectiles.add(projectile)
 
+        for enemy in self.enemy_sprites.sprites():   #added a loop for enemy projectiles
+            enemy.shoot_projectile()
+            for projectile in enemy.projectiles:
+                self.projectiles.add(projectile)
 
+
+        
         self.projectiles.update()  #updates the projecciles position and speed
+        
+        for projectile in self.projectiles.sprites():
+            projectile.rect.x += self.world_shift
+        
+        self.enemy_shoots_player()
+        self.player_shoots_enemy()
+        self.projectile_tile_collide()
+
         self.projectiles.draw(self.display_surface)  #is whats actually rendering the object 
 
         self.projectile_tile_collide()   #calling the method to ensure the projectile removes itself
