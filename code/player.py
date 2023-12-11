@@ -11,6 +11,8 @@ class Player(pygame.sprite.Sprite):
         self.image = self.idle[self.frame_index]
         self.rect = self.image.get_rect(topleft = pos)
         self.shoot_cooldown = 0
+        self.max_health = 100
+        self.current_health = 100
         
         #player movement
         self.direction = pygame.math.Vector2(0,0)
@@ -82,5 +84,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
+
+
 
 
