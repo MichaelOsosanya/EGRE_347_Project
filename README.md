@@ -37,3 +37,12 @@ NEEDS
 
 =======
 >>>>>>> main
+>>>>>>
+CHANGES AS OF 12.10.23
+
+So this gets a little confusing as Mike did not upload his full game file so I had to branch off of main then delete a bunch of files so i could completley upload the new version. but the MAIN changes I made were:
+
+- made projectiles collide with each other
+- gave enemies direction so they can shoot in the direction the player is in
+- combined methods for player shooting mini bosses and all enemies shooting player
+  
