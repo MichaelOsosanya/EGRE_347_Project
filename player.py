@@ -1,36 +1,69 @@
 import pygame
+from support import import_folder
 from projectile import Projectile
+from UI import UI
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos):
+    def __init__(self, x,y, surface):
         super().__init__()
-        self.image = pygame.Surface((32,64))
-        self.image.fill('red')
-        self.rect = self.image.get_rect(topleft = pos)
-        
+        self.import_character_assets()
+        self.y_spawn = y
+        self.x_spawn = x
+        self.frame_index = 0
+        self.animation_speed = 0.15
+        self.image = self.idle[self.frame_index]
+        self.rect = self.image.get_rect(topleft = (x,y))
+        self.shoot_cooldown = 0
+        self.max_health = 100
+        self.current_health = 100
+        self.invincibility = 100
+
+        self.ui = UI(surface)
         #player movement
         self.direction = pygame.math.Vector2(0,0)
         self.speed = 8
         self.gravity = 0    #changed to 0 so it could "float"
         self.jump_speed = -16
 
+        #player status
+        self.facing_right = True
         self.projectiles = pygame.sprite.Group()  # creating an object of the sprite group for the projectile
+
+
+    def import_character_assets(self):
+        character_path = '../graphics/player/robot'
+
+        self.idle = import_folder(character_path)
+
+    def animate(self):
+        animation = self.idle
+
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(animation):
+            self.frame_index = 0
+
+        image = animation[int(self.frame_index)]
+        if self.facing_right:
+            self.image = image
+        else:
+            flipped_image = pygame.transform.flip(image,True,False)
+            self.image = flipped_image
 
     def get_input(self):
         keys = pygame.key.get_pressed()
         
-
         if keys[pygame.K_RIGHT]:
             self.direction.x = 1
+            self.facing_right = True
         elif keys[pygame.K_LEFT]:
             self.direction.x = -1
+            self.facing_right = False
         else:
             self.direction.x = 0
 
-        if keys[pygame.K_SPACE] and keys[pygame.K_RIGHT]:
-            self.shoot_projectile()   #changed from jump
-        elif keys[pygame.K_SPACE] and keys[pygame.K_LEFT]:
-            self.shoot_projectile()   #changed from jump
+        if keys[pygame.K_SPACE]:
+            self.shoot_projectile()
+ 
 
         if keys[pygame.K_UP]:
             self.direction.y = -8
@@ -40,19 +73,26 @@ class Player(pygame.sprite.Sprite):
             self.direction.y = 0
 
             
-
-
     def apply_gravity(self):
         self.direction.y += self.gravity
         self.rect.y += self.direction.y
-
+        
 
     def shoot_projectile(self): #method for the shoot projectile
-        projectile = Projectile(self.rect.x, self.rect.y, self.direction.x) #makes projectile object from the position of the player. 
-        self.projectiles.add(projectile)    #adds that projectile to a group
+        if self.shoot_cooldown <= 0:
+            self.shoot_cooldown = 15
+            projectile = Projectile(self.rect.x, self.rect.y, self.facing_right) #makes projectile object from the position of the player. 
+            self.projectiles.add(projectile)    #adds that projectile to a group
+
+    def take_damage(self):
+        if self.invincibility >= 100:
+            self.current_health -= 10
+            self.invincibility = 0
 
     def update(self):
+        self.ui.show_health(self.current_health, 100)
         self.get_input()
-
+        self.invincibility += 1
+        self.shoot_cooldown -= 1
 
 
