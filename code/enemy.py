@@ -2,7 +2,7 @@ import pygame
 from tile import StaticTile
 from projectile import Projectile
 from settings import screen_width
-#from player import Player
+from player import *
 import random
 
 class Enemy(StaticTile):
@@ -14,7 +14,8 @@ class Enemy(StaticTile):
         self.facing_right = False
         self.shoot_cooldown = 0
         self.randnum = random.randint(1,10)
-        #self.player = Player
+        self.display_surface = image
+
 
     def shoot_projectile(self): #method for the shoot projectile
         if self.shoot_cooldown == 0:
@@ -23,17 +24,16 @@ class Enemy(StaticTile):
             self.projectiles.add(projectile) 
 
     def toggle_direction(self):
-        self.facing_right = not self.facing_right    #switch direction
+        self.facing_right = not self.facing_right
+        
+
     
     def update(self, shift):
         self.rect.x += shift
         
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
-        """
-        if (self.facing_right and self.player.rect.x > self.rect.x) or (not self.facing_right and self.player.rect.x < self.rect.x):
-            self.facing_right = not self.facing_right
-        """
+        
 
 
 class Red_Monster(Enemy):
