@@ -170,55 +170,38 @@ class Level:
                         projectile1.kill()                                      #they both remove themselves
                         projectile2.kill()
 
-    def update_enemy_direction(self,enemy):
-        player_x = self.player.sprite.rect.centerx
+    def update_enemy_direction(self):
+        player = self.player.sprite
+        player_x = player.rect.centerx    #using player position it will take this and toggle the direction when the player has passed the enemy
         enemies = ( self.monster_sprites.sprites() + self.wasp_sprites.sprites() + self.queen_wasp_sprites.sprites()) #need to add enemies here if we want them to all shoot without making new methods
         for enemy in enemies:  
             if (enemy.facing_right and player_x < enemy.rect.x) or (not enemy.facing_right and player_x > enemy.rect.x):  #if the enemy is facing one way and (the player position is less than the enemy) or (enemy is facing other way and (player position is greater than enemy position...))
-                enemy.toggle_direction()            #enemy will toggle direciton
+                enemy.toggle_direction()           #enemy will toggle direciton
 
 
     def monster_shoots_player(self):
         minibosses = (self.monster_sprites.sprites() + self.wasp_sprites.sprites() + self.queen_wasp_sprites.sprites()) #need to add enemies here if we want them to all shoot without making new methods
-        #for projectile in self.monster_sprites.sprites():
+
         for projectile in minibosses:
             projectile_collisions = pygame.sprite.spritecollide(self.player.sprite, projectile.projectiles, True)
             if projectile_collisions:
                 self.collision_count += 1
-                print(f"Player Collision Count: {self.collision_count}")
-    """
-    def wasp_shoots_player(self):
-        for projectile in self.wasp_sprites.sprites():
-            projectile_collisions = pygame.sprite.spritecollide(self.player.sprite, projectile.projectiles, True)
-            if projectile_collisions:
-                self.collision_count += 1
-                print(f"Player Collision Count: {self.collision_count}")
-    
-    def queen_wasp_shoots_player(self):
-        for projectile in self.queen_wasp_sprites.sprites():
-            projectile_collisions = pygame.sprite.spritecollide(self.player.sprite, projectile.projectiles, True)
-            if projectile_collisions:
-                self.collision_count += 1
-                print(f"Player Collision Count: {self.collision_count}")
-    """
+
+   
     def player_shoots_monster(self):
         enemy_die = (self.monster_sprites.sprites() + self.wasp_sprites.sprites())       #need to add enemies here if we want them to all shoot without making new methods
         for enemy in enemy_die:
             enemy_collisions = pygame.sprite.spritecollide(enemy, self.player.sprite.projectiles, True)
             if enemy_collisions:
                 enemy.kill()
-    """
-    def player_shoots_wasp(self):
-        for enemy in self.wasp_sprites.sprites():
-            enemy_collisions = pygame.sprite.spritecollide(enemy, self.player.sprite.projectiles, True)
-            if enemy_collisions:
-                enemy.kill()
-    """
+ 
     def player_shoots_queen_wasp(self):
         for enemy in self.queen_wasp_sprites.sprites():
             enemy_collisions = pygame.sprite.spritecollide(enemy, self.player.sprite.projectiles, True)
             if enemy_collisions:
                 enemy.health -= 1
+
+
 
     def run(self):
     
@@ -286,20 +269,17 @@ class Level:
         for projectile in self.projectiles.sprites():
             projectile.rect.x += self.world_shift
         
-        #self.enemy_shoots_player()
+    
+  
+        self.update_enemy_direction()
         self.monster_shoots_player()
-        #self.wasp_shoots_player()
-        #self.queen_wasp_shoots_player()
-        self.update_enemy_direction(enemy)
 
 
-        #player shoots enemy
         self.player_shoots_monster()
-        #self.player_shoots_wasp()
+ 
         self.player_shoots_queen_wasp()
+        
 
-
-       # self.projectile_tile_collide()
 
         self.projectiles.draw(self.display_surface)  #is whats actually rendering the object 
         self.projectile_projectile_collide()
