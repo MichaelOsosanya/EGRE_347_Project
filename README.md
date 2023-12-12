@@ -44,14 +44,14 @@ So this gets a little confusing as Mike did not upload his full game file so I h
 
 - made projectiles collide with each other
 - gave enemies direction so they can shoot in the direction the player is in
-- combined methods for player shooting mini bosses and all enemies shooting player
+- combined methods for player shooting mini-bosses and all enemies shooting player
 
 NEEDS:
 - if statement if all enemies are defeated
 
 ------------------------------------------------------------------------------------
-CHANGES AS OF 12.10.23 
-Implemented a  health bar that represents the player's current health in the game. Furthermore, the health bar is also displayed within the game in the top left corner of the game. 
+CHANGES AS OF 12.10.23 RM
+- Implemented a  health bar that represents the player's current health in the game. Furthermore, the health bar is also displayed within the game in the top left corner of the game. 
 
 - Needs to be implemented with the collisions from the enemy and obstacles to ensure the player is taking damage when in contact. 
 ____________________________________________________________________________________
