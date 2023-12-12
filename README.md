@@ -48,7 +48,13 @@ So this gets a little confusing as Mike did not upload his full game file so I h
 
 NEEDS:
 - if statement if all enemies are defeated
+
+------------------------------------------------------------------------------------
+CHANGES AS OF 12.10.23 
+Implemented a  health bar that represents the player's current health in the game. Furthermore, the health bar is also displayed within the game in the top left corner of the game. 
+
+- Needs to be implemented with the collisions from the enemy and obstacles to ensure the player is taking damage when in contact. 
 ____________________________________________________________________________________
 CHANGES AS OF 12.11.23 GVB
-- Updated main.py to allow health bar to tkae input from the collision count and subtract 10 damage points every time player is shot
+- Updated main.py to allow the health bar to take input from the collision count and subtract 10 damage points every time the player is shot
   
